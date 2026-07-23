@@ -8,19 +8,22 @@ import { BASE_URL } from '../utils/constants'
 const Login = () => {
   const [emailid , setEmailId] = useState("kushal@gmail.com")
   const [password , setPassword] = useState("Kushal@123")
+  const [err,setErr] = useState("")
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const handleLogin = async ()=>{
-    const res = await axios.post(BASE_URL + "/login",{
-      emailid,
-      password
-    },{withCredentials : true})
-    
-    dispatch(addUser(res.data))
+ 
+    const handleLogin = async ()=>
+      { 
+         try{
+        const res = await axios.post(BASE_URL + "/login",{ emailid, password },{withCredentials : true})
+         dispatch(addUser(res.data))
+         return navigate("/")
+         }
+    catch(err){
+    setErr(err.response.data)
 
-    return navigate("/")
-
-  }
+}
+      }
   return (
     <div className="flex justify-center my-10">
   <div className="card bg-base-300 w-96 shadow-xl">
@@ -54,6 +57,7 @@ const Login = () => {
           />
         </label>
       </div>
+      <p className='text-red-500'>{err}</p>
 
       <div className="card-actions justify-center m-2">
         <button className="btn btn-primary" onClick={handleLogin}>
