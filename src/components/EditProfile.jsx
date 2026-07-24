@@ -9,8 +9,6 @@ import { addUser } from '../utils/userSlice'
 
 const EditProfile = ({user}) => {
     const dispatch = useDispatch()
-
-    
     const [firstname , setFirstname] = useState(user.firstname)
     const [lastname, setLastname] = useState(user.lastname)
     const [age, setAge] = useState(user.age)
@@ -29,7 +27,7 @@ const EditProfile = ({user}) => {
         age,
         gender,
         photourl,
-        about},{withCredentials :true})
+        about},{withCredentials : true})
         dispatch(addUser(res.data.updatedprofile))
         setToast(true)
         setTimeout(()=>{
@@ -40,7 +38,7 @@ const EditProfile = ({user}) => {
         
     }
     catch(err){
-       setError(err.response.data)
+       setError(err?.response?.data)
 
 
     }
