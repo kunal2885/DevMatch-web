@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import stat from "daisyui/components/stat";
+
 
 const connectionsSlice = createSlice({
     name : "connections",
