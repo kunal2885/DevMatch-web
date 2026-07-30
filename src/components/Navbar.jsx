@@ -8,6 +8,7 @@ const NavBar = () => {
   const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
 
   const handleLogout = async () => {
     try {
@@ -29,7 +30,7 @@ const NavBar = () => {
       </div>
       {user && (
         <div className="flex-none gap-2">
-          <div className="form-control">Welcome, {user.firstName}</div>
+          <div className="form-control">Welcome, {user.firstname}</div>
           <div className="dropdown dropdown-end mx-5 flex">
             <div
               tabIndex={0}
