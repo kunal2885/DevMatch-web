@@ -6,25 +6,44 @@ import { useSelector } from "react-redux";
 
 const Chat = () => {
   const {targetUserId} = useParams()
-  const [messages , setMessages] = useState([{text : "Hello Kushal !"}])
+  const [messages , setMessages] = useState([])
+  const [newMessage , setNewMessage] = useState("")
   const user = useSelector(store => store.user)
   const userId = user?._id
 
   useEffect(()=>{
+    if(!user){ return }
+
     const socket = createSocketConnection()
-    socket.emit("joinChat",{userId , targetUserId})
+    socket.emit("joinChat",{firstname: user.firstname , userId , targetUserId})
+
+    socket.on("messageReceived",({firstname , lastname , text})=>{
+      console.log(firstname + " "+ text)
+      setMessages(messages => [...messages , {firstname , lastname , text}])
+
+    })
+
 
     return ()=>{
        socket.disconnect()
     }
-  })
+  },[userId , targetUserId])
+
+
+  const sendMessage = ()=>{
+    const socket = createSocketConnection()
+    socket.emit("sendMessage",{firstname : user.firstname , lastname : user.lastname , userId , targetUserId , text : newMessage})
+
+    setNewMessage("")
+
+  }
  
 
   return (
     <div className="min-h-[calc(100vh-80px)] bg-base-200 px-4 py-6 md:px-8">
       <div className="mx-auto flex h-[75vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-2xl">
 
-        {/* Chat Header */}
+        
         <div className="flex items-center justify-between border-b border-base-300 bg-base-100 px-5 py-4">
           <div>
             <h1 className="text-xl font-bold md:text-2xl">
@@ -51,7 +70,7 @@ const Chat = () => {
         key={index}
       >
         <div className="chat-header">
-          Obi-Wan Kenobi
+          {msg.firstname + " " + msg.lastname}
           <time className="text-xs opacity-50 ml-2">
             2 hours ago
           </time>
@@ -76,9 +95,11 @@ const Chat = () => {
             <input
               className="input input-ghost flex-1 bg-transparent text-base focus:outline-none"
               placeholder="Type a message..."
+              value={newMessage}
+              onChange={(e)=> setNewMessage(e.target.value)}
             />
 
-            <button className="btn btn-primary rounded-xl px-5 shadow-md hover:scale-105 transition-all duration-200">
+            <button className="btn btn-primary rounded-xl px-5 shadow-md hover:scale-105 transition-all duration-200" onClick={sendMessage}>
               Send
             </button>
 
