@@ -28,7 +28,7 @@ const NavBar = () => {
         to="/"
         className="text-2xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:scale-105 transition-transform duration-300"
       >
-        DevTinder
+        DevMatch
       </Link>
     </div>
 
