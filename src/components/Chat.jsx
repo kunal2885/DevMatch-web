@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
 
 
 const Chat = () => {
@@ -10,6 +12,28 @@ const Chat = () => {
   const [newMessage , setNewMessage] = useState("")
   const user = useSelector(store => store.user)
   const userId = user?._id
+
+
+  //function to fetch the chat messages 
+
+  const fetchChatMessages = async ()=>{
+    try{
+    const chat = await axios.get(BASE_URL + "/chat/" + targetUserId , {withCredentials : true})
+    const messages = chat?.data?.messages
+    
+
+    const chats = messages.map((msg)=>{
+      return {firstname : msg?.senderId?.firstname , lastname : msg?.senderId?.lastname , text : msg.text}
+    })
+
+    setMessages(chats)
+    }catch(err){
+      console.log(err)
+    }
+  }
+  useEffect(()=>{
+    fetchChatMessages()
+  },[])
 
   useEffect(()=>{
     if(!user){ return }
@@ -66,23 +90,19 @@ const Chat = () => {
   {messages.map((msg, index) => {
     return (
       <div
-        className="chat chat-start"
+        className={"chat " + (user.firstname === msg.firstname ? "chat-end" : "chat-start")}
         key={index}
       >
         <div className="chat-header">
           {msg.firstname + " " + msg.lastname}
-          <time className="text-xs opacity-50 ml-2">
-            2 hours ago
-          </time>
+          
         </div>
 
         <div className="chat-bubble">
           {msg.text}
         </div>
 
-        <div className="chat-footer opacity-50">
-          Seen
-        </div>
+        
       </div>
     );
   })}
